@@ -9,4 +9,4 @@ const linearSearch = (Arr,t) => {
 
 let arr = [5,10,-2,19,22,-7,15,3,8]
 
-console.log(linearSearch(arr,-2))
+console.log(linearSearch(arr,-2))  // 2
