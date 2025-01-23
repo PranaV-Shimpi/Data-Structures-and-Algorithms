@@ -1,0 +1,94 @@
+/**
+ * @param {string} haystack
+ * @param {string} needle
+ * @return {number}
+ */
+var strStr = function (haystack, needle) {
+    // ------------------------------------------------------------
+    // solution1:
+    // ------------------------------------------------------------
+    // return haystack.indexOf(needle);
+
+    // ------------------------------------------------------------
+    // solution2: Bruteforce 0(m*n)
+    // ------------------------------------------------------------
+    // if (haystack.length < needle.length) {
+    //     return -1;
+    // }
+
+    // for (let i = 0; i <= haystack.length - needle.length; i++) {
+    //     if (haystack.substring(i, i + needle.length) === needle) {
+    //         return i;
+    //     }
+    // }
+
+    // return -1;
+
+    // ------------------------------------------------------------
+    // solution3:Knuth-Morris-Pratt (KMP) 0(m+n)
+    // ------------------------------------------------------------
+
+    // Edge case: if needle is an empty string, return 0
+    if (needle.length === 0) return 0;
+
+// Step 1: Build the failure function (prefix function) for the needle
+    
+    function buildFailureTable(pattern) {
+        let m = pattern.length;
+        let fail = new Array(m).fill(0);
+        let j = 0; // Pointer for the pattern
+
+// Loop through the pattern starting from index 1
+        for (let i = 1; i < m; i++) {
+// Adjust j using the failure function when a mismatch occurs
+            while (j > 0 && pattern[i] !== pattern[j]) {
+                j = fail[j - 1];
+            }
+
+// If characters match, increment j
+            if (pattern[i] === pattern[j]) {
+                j++;
+            }
+
+// Store the length of the longest prefix that is also a suffix
+            fail[i] = j;
+        }
+
+        return fail;
+    }
+
+// Step 2: Search for the needle in the haystack using the failure function
+    let n = haystack.length;
+    let m = needle.length;
+    let fail = buildFailureTable(needle);  // Failure function for the needle
+    let i = 0;  // Pointer for haystack
+    let j = 0;  // Pointer for needle
+
+    // Loop through the haystack
+    
+    while (i < n) {
+    // If characters match, move both pointers forward
+        if (haystack[i] === needle[j]) {
+            i++;
+            j++;
+
+    // If we've matched the entire needle, return the starting index
+            if (j === m) {
+                return i - j;
+            }
+        } else {
+    // Mismatch: use the failure function to move the needle pointer (j)
+            if (j > 0) {
+                j = fail[j - 1];
+            } else {
+    // If j == 0, just move to the next character in the haystack
+                i++;
+            }
+        }
+    }
+
+    // If no match is found, return -1
+    return -1;
+
+
+};
